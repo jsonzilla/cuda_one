@@ -123,11 +123,12 @@ float CheckSum(
 	const int width,
 	const int height)
 {
-	float s1;
+	float s1 = 0;
 	float s2;
 
-	for (int i = 0, s1 = 0; i < width; i++) {
-		for (int j = 0, s2 = 0; j < height; j++) {
+	for (int i = 0; i < width; i++) {
+		s2 = 0;
+		for (int j = 0; j < height; j++) {
 			s2 += (const float)matrix[i * width + j];
 		}
 		s1 += s2;

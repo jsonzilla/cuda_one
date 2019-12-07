@@ -1,30 +1,18 @@
-/* Matrix multiplication: C = A * B.
- * Host code.
- */
-
-// includes, system
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include <chrono>
-
 
 #include <cuda_runtime.h>
 
-// includes, kernels
-
-
 #include "assist.h"
-
 #include "matrixmul.h"
 
 int main(int argc, char** argv) {
 	bool if_quiet = false;
-	unsigned int timer_compute = 0;
-	char* matrix_id = NULL;
-	char* input_fn = NULL;
-	char* gold_fn = NULL;
+	char* matrix_id = nullptr;
+	char* input_fn = nullptr;
+	char* gold_fn = nullptr;
 	int Mw = 0;
 	int Mh = 0;
 	int Nw = 0;
@@ -45,7 +33,7 @@ int main(int argc, char** argv) {
 		exit(1);
 	}
 
-	Mw = Mh = Mw = Nh = Pw = Ph = atoi(matrix_id);
+	Mw = Mh = Mw = Nh = Nw = Pw = Ph = atoi(matrix_id);
 	input_fn = (char*)malloc(30 * sizeof(char));
 	gold_fn = (char*)malloc(30 * sizeof(char));
 	sprintf(input_fn, "matrix_%s.bin", matrix_id);
@@ -61,16 +49,16 @@ int main(int argc, char** argv) {
 	printf(" M: %d x %d\n", Mw, Mh);
 	printf(" N: %d x %d\n", Nw, Nh);
 
-	unsigned int size_M = Mw * Mh;
-	unsigned int mem_size_M = sizeof(float) * size_M;
+	const unsigned int size_M = Mw * Mh;
+	const unsigned int mem_size_M = sizeof(float) * size_M;
 	float* hostM = (float*)malloc(mem_size_M);
-	unsigned int size_N = Nw * Nh;
-	unsigned int mem_size_N = sizeof(float) * size_N;
+	const unsigned int size_N = Nw * Nh;
+	const unsigned int mem_size_N = sizeof(float) * size_N;
 	float* hostN = (float*)malloc(mem_size_N);
 
 	printf(" Allocate memory for the result on the host side.\n");
-	unsigned int size_P = Pw * Ph;
-	unsigned int mem_size_P = sizeof(float) * size_P;
+	const unsigned int size_P = Pw * Ph;
+	const unsigned int mem_size_P = sizeof(float) * size_P;
 	float* hostP = (float*)malloc(mem_size_P);
 
 	printf(" Generate input matrix data for matrix M and N.\n");
@@ -93,7 +81,7 @@ int main(int argc, char** argv) {
 	float* reference = (float*)malloc(mem_size_P);
 	computeGold(reference, hostM, hostN, Mh, Mw, Nw);
 
-	printf(" CPU Processing time : %f (ms)\n", 0.0);
+	//printf(" CPU Processing time : %f (ms)\n", 0.0);
 	printf(" Matrix data checksum : %g\n", CheckSum(reference, Mw, Nw));
 
 	if (!if_quiet) {
@@ -101,11 +89,11 @@ int main(int argc, char** argv) {
 		printf(" ");
 	}
 
-	matrix = (unsigned int*)malloc(Pw * Ph * sizeof(unsigned int));
+	matrix = (unsigned int*)malloc(Pw*Ph*sizeof(unsigned int));
 	for (int i = 0; i < Ph; i++) {
 		for (int j = 0; j < Pw; j++) {
-			matrix[i * Pw + j] = (unsigned int)reference[i * Pw + j];
-			if (!if_quiet) printf("%u ", matrix[i * Pw + j]);
+			matrix[i*Pw + j] = (unsigned int)reference[i*Pw + j];
+			if (!if_quiet) printf("%u ", matrix[i*Pw + j]);
 		}
 		if (!if_quiet) printf("\n   ");
 	}
